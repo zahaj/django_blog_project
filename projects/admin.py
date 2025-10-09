@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Project, Technology
+from .models import Project, Technology, Category
 
 class ProjectAdmin(admin.ModelAdmin):
     # This adds a nice, filterable selection box for technologies
@@ -12,3 +12,4 @@ class ProjectAdmin(admin.ModelAdmin):
 # Unregister the old simple registration if it exists, and re-register with the admin class
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Technology)
+admin.site.register(Category)
