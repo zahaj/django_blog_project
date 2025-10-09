@@ -4,6 +4,8 @@ from .models import Project, Technology
 
 class ProjectAdmin(admin.ModelAdmin):
     # This adds a nice, filterable selection box for technologies
+    list_display = ('title', 'link', 'created_at',) # Columns to display
+    search_fields = ('title', 'description',)      # Fields to search through
     filter_horizontal = ('technologies',)
 
 # Register your models here.
