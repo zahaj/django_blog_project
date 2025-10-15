@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from .models import Project
+from django.shortcuts import render, get_object_or_404
+from .models import Project, Technology
 
 # Create your views here.
 def project_index(request):
@@ -19,3 +19,20 @@ def project_index(request):
 
 def about(request):
     return render(request, 'projects/about.html')
+
+def project_detail(request, pk):
+    # project = Project.objects.get()
+    project = get_object_or_404(Project, pk=pk)
+    context = {
+        'project': project
+    }
+    return render(request, 'projects/project_detail.html', context)
+
+def technology_detail(request, name):
+    technology = get_object_or_404(Technology, name__iexact=name)
+    projects = technology.project_set.all()
+    context = {
+        'technology': technology,
+        'projects': projects
+    }
+    return render(request, 'projects/technology_detail.html', context)

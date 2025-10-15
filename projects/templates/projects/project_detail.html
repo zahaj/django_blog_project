@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load static %} {% block content %}
+  <h2>{{ project.title }}</h2>
+  <div>
+    <div>
+      {% if project.image %}
+        <img src="{{ project.image.url }}" alt="{{ project.title }}" width="80%">
+      {% endif %}
+    </div>
+    <div>
+      <p>{{ project.description }}</p>
+      <p><strong>Technologies:</strong>
+        {% for tech in project.technologies.all %}
+          <span>{{ tech.name }}</span>
+        {% endfor %}
+      </p>
+      <a href="{{ project.link }}" target="_blank" class="btn btn-primary">View Project Source</a>
+    </div>
+  </div>
+{% endblock content %}
