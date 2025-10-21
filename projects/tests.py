@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
-from projects import views 
+from projects import views
+# from .models import Project
 # from django.test import TestCase
 
 # Create your tests here.
@@ -29,3 +30,41 @@ def test_project_index_loads_correctly(client):
     # Assert
     assert response.status_code == 200
 
+@pytest.mark.django_db
+def test_project_index_displays_project_title(client, test_project):
+
+    # Arrange
+    url = reverse('project_index')
+    
+    # Act
+    response = client.get(url)
+
+    # Assert
+    assert response.status_code == 200
+    assert "Test Project 1" in str(response.content)
+
+@pytest.mark.django_db
+def test_project_detail_page_loads_correctly(client, test_project):
+
+    # Arrange
+    url = reverse('project_detail', args=[test_project.pk])
+
+    # Act
+    response = client.get(url)
+
+    # Assert
+    assert response.status_code == 200
+    assert "Test Project 1" in str(response.content)
+    assert "This is a description" in str(response.content)
+
+@pytest.mark.django_db
+def test_technology_detail_page_displays_project(client, test_project, test_technology):
+    
+    # Arrange
+    url = reverse('technology_detail', args=[test_technology.name])
+    
+    # Act
+    response = client.get(url)
+    
+    # Assert
+    assert "Test Project 1" in str(response.content)
