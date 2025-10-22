@@ -68,3 +68,23 @@ def test_technology_detail_page_displays_project(client, test_project, test_tech
     
     # Assert
     assert "Test Project 1" in str(response.content)
+
+@pytest.mark.django_db
+def test_contact_form_submission(client):
+
+    # Arrange
+    url = reverse('contact')
+    form_data = {
+        'name': "Test User",
+        'email': "test@example.com",
+        'message': "This is a test message."
+     }
+    
+    # Act: Simulate a POST request
+    response = client.post(url, form_data)
+
+    # Assert: Check for a successful redirect
+    assert response.status_code == 302 # 302 is the code for a redirect
+
+    # Assert: Check that it redirected to the correct page
+    assert response.url == reverse('project_index')

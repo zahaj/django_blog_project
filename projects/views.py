@@ -1,5 +1,6 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Project, Technology
+from .forms import ContactForm
 
 # Create your views here.
 def project_index(request):
@@ -36,3 +37,28 @@ def technology_detail(request, name):
         'projects': projects
     }
     return render(request, 'projects/technology_detail.html', context)
+
+def contact(request):
+    if request.method == 'POST':
+        # This is a POST request, so process the form data
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Form data is valid!
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            
+            # For now, just print it to the console
+            print(f'New Message from {name} ({email}): {message}')
+
+            # Redirect to a new URL to prevent form re-submission
+            return redirect('project_index')
+    else:
+        # This is a GET request, so create a blank form
+        form = ContactForm()
+        
+    context = {
+        'form': form
+    }
+
+    return render(request, 'projects/contact.html', context)
