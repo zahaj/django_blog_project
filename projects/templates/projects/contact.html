@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h4>Contact me</h4>
-<form method="POST">
+<p><h5>Contact me</h5></p>
+
+<form method="POST" novalidate>
   {% csrf_token %} {{ form.as_p }}   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock content %}

@@ -42,8 +42,8 @@ def contact(request):
     if request.method == 'POST':
         # This is a POST request, so process the form data
         form = ContactForm(request.POST)
+        
         if form.is_valid():
-            # Form data is valid!
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
             message = form.cleaned_data['message']
@@ -53,6 +53,9 @@ def contact(request):
 
             # Redirect to a new URL to prevent form re-submission
             return redirect('project_index')
+        else:
+            print("Form invalid!")
+            print(form.errors.as_data())
     else:
         # This is a GET request, so create a blank form
         form = ContactForm()
@@ -60,5 +63,4 @@ def contact(request):
     context = {
         'form': form
     }
-
     return render(request, 'projects/contact.html', context)
