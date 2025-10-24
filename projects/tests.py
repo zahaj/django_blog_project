@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+from django.core import mail
 from projects import views
 # from .models import Project
 # from django.test import TestCase
@@ -88,3 +89,31 @@ def test_contact_form_submission(client):
 
     # Assert: Check that it redirected to the correct page
     assert response.url == reverse('project_index')
+
+@pytest.mark.django_db
+def test_contact_form_sends_email(client):
+
+    # Arrange
+    url = reverse('contact')
+    form_data = {
+        'name': "Test User",
+        'email': "test@example.com",
+        'message': "This is a test message."
+     }
+    
+    # Act
+    response = client.post(url, form_data)
+
+    # Assert
+    assert response.status_code == 302
+    assert response.url == reverse('project_index')
+
+    # Check that exactly one email was sent
+    assert len(mail.outbox) == 1
+
+    # Get the email and check its details
+    sent_email = mail.outbox[0]
+    assert sent_email.subject == "New Contact Form Submission from Test User"
+    assert "This is a test message." in sent_email.body
+    assert "test@example.com" in sent_email.body
+    assert sent_email.to == ['e.zahajkiewicz@gmail.com']

@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.mail import send_mail
 from .models import Project, Technology
 from .forms import ContactForm
 
@@ -48,7 +49,25 @@ def contact(request):
             email = form.cleaned_data['email']
             message = form.cleaned_data['message']
             
-            # For now, just print it to the console
+            # --- Build and send the email ---
+            subject = f"New Contact Form Submission from {name}"
+            email_message = f"""
+            You received a new message from your portfolio site:
+
+            From: {name}
+            Email: {email}
+
+            Message:
+            {message}
+            """
+            send_mail(
+                subject,
+                email_message,
+                'contact-form@domain.com', # "From" email
+                ['e.zahajkiewicz@gmail.com'],      # "To" email (list)
+            )
+
+            # For now, we'll keep the print statement for a quick check
             print(f'New Message from {name} ({email}): {message}')
 
             # Redirect to a new URL to prevent form re-submission
