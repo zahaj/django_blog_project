@@ -1,5 +1,7 @@
+boto3==1.40.59
 dj-database-url==3.0.1
 Django==5.2.7
+django-storages==1.14.6
 gunicorn==23.0.0
 pillow==11.3.0
 psycopg2-binary==2.9.11
