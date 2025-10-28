@@ -31,7 +31,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False
 
 # Add '127.0.0.1' (localhost) so Gunicorn can run
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '.onrender.com',
+    'my-portfolio-rsms.onrender.com'
+]
 
 
 # Application definition
