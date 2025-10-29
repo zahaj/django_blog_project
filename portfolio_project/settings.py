@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -168,5 +169,18 @@ else:
     AWS_S3_CUSTOM_DOMAIN = None # Or some default/error
 
 # Use S3 for media files
-DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
+
+STORAGES = {
+    # This sets the default file storage (for media/uploads) to S3
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    # This ensures Django still uses the local storage backend for static files
+    # if you are collecting them locally before deployment.
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    }
+}
+
 MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
