@@ -160,7 +160,12 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
-AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN')
+
+# Build the custom domain URL from the other variables
+if AWS_STORAGE_BUCKET_NAME and AWS_S3_REGION_NAME:
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)
+else:
+    AWS_S3_CUSTOM_DOMAIN = None # Or some default/error
 
 # Use S3 for media files
 DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
