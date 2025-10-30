@@ -130,6 +130,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# Static files (served locally via Whitenoise)
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
@@ -141,7 +142,17 @@ STATICFILES_DIRS = [
 # Therefore if you remove an application from INSTALLED_APPS, it’s a good idea to use
 # the collectstatic --clear option in order to remove stale static files.
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Whitenoise handles compression + manifest hashing
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Media files (stored in S3)
+STORAGES = {
+    # This sets the default file storage (for media/uploads) to S3
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -161,26 +172,15 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_FILE_OVERWRITE = False
+AWS_S3_SIGNATURE_VERSION = "s3v4"
 
 # Build the custom domain URL from the other variables
 if AWS_STORAGE_BUCKET_NAME and AWS_S3_REGION_NAME:
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)
 else:
     AWS_S3_CUSTOM_DOMAIN = None # Or some default/error
-
-# Use S3 for media files
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
-
-STORAGES = {
-    # This sets the default file storage (for media/uploads) to S3
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-    },
-    # This ensures Django still uses the local storage backend for static files
-    # if you are collecting them locally before deployment.
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    }
-}
 
 MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
