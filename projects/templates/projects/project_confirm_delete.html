@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Are you sure?</h2>
+  <p>You are about to permanently delete the project: <strong>{{ object.title }}</strong></p>
+  <p>This action cannot be undone.</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'project_detail' object.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock content %}

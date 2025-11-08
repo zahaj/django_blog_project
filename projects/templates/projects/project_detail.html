@@ -3,11 +3,16 @@
 
 {% block content %}
   <h2 class="mb-4">{{ project.title }}</h2>
+    {% if user.is_authenticated %}
+      <a href="{% url 'project_edit' project.pk %}" class="btn btn-secondary">Edit Project</a>
+      <a href="{% url 'project_delete' project.pk %}" class="btn btn-danger">Delete Project</a>
+    {% endif %}
   <div class="row">
     <div class="col-md-8">
       {% if project.image %}
         <img src="{{ project.image.url }}" alt="{{ project.title }}" class="img-fluid mb-3">
       {% endif %}
+      <br/>
       <p>{{ project.description }}</p>
     </div>
     <div class="col-md-4">

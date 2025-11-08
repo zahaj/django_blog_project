@@ -1,7 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
 from .models import Project, Technology
-from .forms import ContactForm
+from .forms import ContactForm, ProjectForm
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 def project_index(request):
@@ -83,3 +87,25 @@ def contact(request):
         'form': form
     }
     return render(request, 'projects/contact.html', context)
+
+class ProjectCreateView(LoginRequiredMixin, CreateView):
+    model = Project
+    form_class = ProjectForm
+    template_name = 'projects/project_form.html'
+    success_url = reverse_lazy('project_index') # Where to go after success
+    
+    # This ensures the 'login_required' mixin knows where to redirect
+    login_url = '/admin/login'
+
+class ProjectUpdateView(LoginRequiredMixin, UpdateView):
+    model = Project
+    form_class = ProjectForm
+    template_name = 'projects/project_form.html'
+    success_url = reverse_lazy('project_index')
+
+class ProjectDeleteView(LoginRequiredMixin, DeleteView):
+    model = Project
+    # form_class = ProjectForm
+    template_name = 'projects/project_confirm_delete.html'
+    success_url = reverse_lazy('project_index')
+    login_url = '/admin/login/'
