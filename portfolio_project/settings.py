@@ -28,16 +28,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# Reads the DEBUG value from .env. Defaults to 'False' if not set.
+# We check 'True' (a string) because env variables are all strings.
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# Add '127.0.0.1' (localhost) so Gunicorn can run
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    '.onrender.com',
-    'my-portfolio-rsms.onrender.com'
-]
 
+ALLOWED_HOSTS = [] # Start with an empty list
+
+if DEBUG:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] # Add '127.0.0.1' (localhost) so Gunicorn can run
+else:
+    ALLOWED_HOSTS = [
+        '127.0.0.1',
+        'localhost',
+        '.onrender.com',
+        'my-portfolio-rsms.onrender.com'
+    ]
 
 # Application definition
 
@@ -126,47 +132,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-# Static files (served locally via Whitenoise)
-
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
-
-# On subsequent collectstatic runs (if STATIC_ROOT isn’t empty), files are copied only
-# if they have a modified timestamp greater than the timestamp of the file in STATIC_ROOT.
-# Therefore if you remove an application from INSTALLED_APPS, it’s a good idea to use
-# the collectstatic --clear option in order to remove stale static files.
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Whitenoise handles compression + manifest hashing
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Media files (stored in S3)
-STORAGES = {
-    # This sets the default file storage (for media/uploads) to S3
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Email configuration for development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# For production we use: EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# and provide the host, port, username, and password from .env file
-
 # AWS S3 Storage Configuration
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
@@ -177,10 +142,74 @@ AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 
-# Build the custom domain URL from the other variables
-if AWS_STORAGE_BUCKET_NAME and AWS_S3_REGION_NAME:
-    AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)
-else:
-    AWS_S3_CUSTOM_DOMAIN = None # Or some default/error
+# --- Storage, Static, and Media File Logic ---
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+if DEBUG:
+    # --- DEVELOPMENT SETTINGS ---
 
-MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+    # Static files (just runserver, no whitenoise)
+    STATIC_URL = 'static/'
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
+
+    # Media files (local file storage)
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        }
+    }
+
+else:
+    # --- PRODUCTION SETTINGS ---
+
+    # Static files (Whitenoise)
+    STATIC_URL = 'static/'
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
+
+    # On subsequent collectstatic runs (if STATIC_ROOT isn’t empty), files are copied only
+    # if they have a modified timestamp greater than the timestamp of the file in STATIC_ROOT.
+    # Therefore if you remove an application from INSTALLED_APPS, it’s a good idea to use
+    # the collectstatic --clear option in order to remove stale static files.
+    STATIC_ROOT = BASE_DIR / 'staticfiles' # For collectstatic
+
+    # S3 Media files and Whitenoise static files
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+
+    # Build the custom domain URL from the other variables
+    if AWS_STORAGE_BUCKET_NAME and AWS_S3_REGION_NAME:
+        AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)
+    else:
+        AWS_S3_CUSTOM_DOMAIN = None # Or some default/error
+
+    MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email configuration for development
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# For production we use: EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# and provide the host, port, username, and password from .env file
+
+
+# A login page is the standard admin login
+LOGIN_URL = '/admin/login/'
