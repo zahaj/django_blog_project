@@ -1,24 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>Hi there, I'm Ewa Zahajkiewicz.</p>
+<h2 class="card-title mb-4">About Me</h2>
+<div class="row justify-content-left">
+    <div class="col-lg-10">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-5">
 
-<p>I'm a Junior Python Developer transitioning from a background in software testing and scientific research. I'm passionate about building robust backend systems and have spent the last several months developing my skills in modern web technologies.</p>
+          <p class="lead">Hi there, I'm Ewa Zahajkiewicz. I'm a Junior Python Developer transitioning from a background in software testing and scientific research. I'm passionate about building robust backend systems and have spent the last several months developing my skills in modern web technologies.</p>
 
-<p>🚀 What I'm Working On:</p>
+          <h4 class="mt-5">🚀 What I'm Working On:</h4>
+          <p>I'm currently building a complete, containerized Daily Briefing Application using FastAPI, PostgreSQL, and Docker. This project involves everything from API design and database integration to creating a full CI/CD pipeline.</p>
 
-I'm currently building a complete, containerized Daily Briefing Application using FastAPI, PostgreSQL, and Docker. This project involves everything from API design and database integration to creating a full CI/CD pipeline.
+          <h4 class="mt-5">🛠️ My Tech Stack:</h4>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Backend:</strong> Python, Django, FastAPI, SQLAlchemy</li>
+            <li class="list-group-item"><strong>Database:</strong> PostgreSQL</li>
+            <li class="list-group-item"><strong>DevOps:</strong> Docker, Docker Compose, Render, AWS S3</li>
+            <li class="list-group-item"><strong>Testing:</strong> Pytest, unittest</li>
+          </ul>
 
-<p>🛠️ My Tech Stack:</p>
-<ul>
-<li><strong>Backend:</strong> Python, FastAPI, SQLAlchemy</li>
-<li><strong>Database:</strong> PostgreSQL</li>
-<li><strong>DevOps:</strong> Docker, Docker Compose</li>
-<li><strong>Testing:</strong> unittest, Pytest</li>
-</ul>
-
-<p>📫 How to Reach Me:</p>
-
-LinkedIn: https://www.linkedin.com/in/ewa-zahajkiewicz<br/>
-Email: e.zahajkiewicz@gmail.com
+          <h4 class="mt-5">📫 How to Reach Me:</h4>
+          <p>
+            <a href="mailto:e.zahajkiewicz@gmail.com" class="btn btn-primary">Send me an Email</a>
+            <a href="https://www.linkedin.com/in/ewa-zahajkiewicz" class="btn btn-outline-secondary" target="_blank">View LinkedIn Profile</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
