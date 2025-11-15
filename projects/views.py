@@ -1,33 +1,48 @@
+"""
+Views for the 'projects' app.
+
+This file contains the "business logic" that handles web requests
+and returns responses. It includes:
+
+Function-Based Views (FBVs) for simple, read-only pages (e.g., index, about).
+
+Class-Based Views (CBVs) for handling complex, model-based
+CRUD (Create, Read, Update, Delete) operations for Projects.
+"""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
 from .models import Project, Technology
 from .forms import ContactForm, ProjectForm
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
 
-# Create your views here.
 def project_index(request):
-    # This query retrieves all Project objects from the database
+    """
+    Renders the homepage with a list of all Project objects.
+
+    Template: 'projects/project_index.html'
+    Context: {'projects': All Project objects}
+    """
     projects = Project.objects.all()
     
-    # The context dictionary is used to pass data to the template
     context = {
-        # If a variable doesn't exist in the template, Django just treats it
-        # as empty and fails silently. The names in the context dictionary must match
-        # the variables used in the template.
         'projects': projects
     }
-
-    # render() combines the template with the context data and returns an HttpResponse
     return render(request, 'projects/project_index.html', context)
 
 def about(request):
     return render(request, 'projects/about.html')
 
 def project_detail(request, pk):
-    # project = Project.objects.get()
+    """
+    Renders the detail page for a single project, identified by its 
+    primary key (pk). Returns a 404 if the project is not found.
+
+    Template: 'projects/project_detail.html'
+    Context: {'project': The requested Project object}
+    """
     project = get_object_or_404(Project, pk=pk)
     context = {
         'project': project
@@ -35,7 +50,20 @@ def project_detail(request, pk):
     return render(request, 'projects/project_detail.html', context)
 
 def technology_detail(request, name):
-    technology = get_object_or_404(Technology, name__iexact=name)
+    """
+    Displays a detail page for a single Technology.
+
+    Fetches a Technology by its 'name' (case-insensitive) and 
+    retrieves all associated projects via a reverse lookup.
+    Returns a 404 if the technology is not found.
+
+    Template: 'projects/technology_detail.html'
+    Context: {
+        'technology': The requested Technology object,
+        'projects': A QuerySet of all projects linked to this technology
+    }
+    """
+    technology = get_object_or_404(Technology, name=name)
     projects = technology.project_set.all()
     context = {
         'technology': technology,
@@ -44,8 +72,16 @@ def technology_detail(request, name):
     return render(request, 'projects/technology_detail.html', context)
 
 def contact(request):
+    """
+    Handles the contact form.
+    - GET: Displays a blank ContactForm.
+    - POST: Validates form. If valid, sends email and redirects to 
+            'project_index'. If invalid, re-renders form with errors.
+            
+    Template: 'projects/contact.html'
+    Context: {'form': ContactForm instance}
+    """
     if request.method == 'POST':
-        # This is a POST request, so process the form data
         form = ContactForm(request.POST)
         
         if form.is_valid():
@@ -53,7 +89,6 @@ def contact(request):
             email = form.cleaned_data['email']
             message = form.cleaned_data['message']
             
-            # --- Build and send the email ---
             subject = f"New Contact Form Submission from {name}"
             email_message = f"""
             You received a new message from your portfolio site:
@@ -67,20 +102,16 @@ def contact(request):
             send_mail(
                 subject,
                 email_message,
-                'contact-form@domain.com', # "From" email
-                ['e.zahajkiewicz@gmail.com'],      # "To" email (list)
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.ADMIN_EMAIL],
             )
 
-            # For now, we'll keep the print statement for a quick check
             print(f'New Message from {name} ({email}): {message}')
-
-            # Redirect to a new URL to prevent form re-submission
             return redirect('project_index')
         else:
             print("Form invalid!")
             print(form.errors.as_data())
     else:
-        # This is a GET request, so create a blank form
         form = ContactForm()
         
     context = {
@@ -93,9 +124,6 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     form_class = ProjectForm
     template_name = 'projects/project_form.html'
     success_url = reverse_lazy('project_index') # Where to go after success
-    
-    # This ensures the 'login_required' mixin knows where to redirect
-    login_url = '/admin/login'
 
 class ProjectUpdateView(LoginRequiredMixin, UpdateView):
     model = Project
@@ -105,7 +133,5 @@ class ProjectUpdateView(LoginRequiredMixin, UpdateView):
 
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
-    # form_class = ProjectForm
     template_name = 'projects/project_confirm_delete.html'
     success_url = reverse_lazy('project_index')
-    login_url = '/admin/login/'

@@ -1,15 +1,26 @@
-from django.contrib import admin
+"""
+Admin configuration for the 'projects' app.
 
+This file registers models with the Django admin interface and
+defines custom ModelAdmin classes to improve the admin experience.
+"""
+from django.contrib import admin
 from .models import Project, Technology, Category
 
+@admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    # This adds a nice, filterable selection box for technologies
-    list_display = ('title', 'link', 'created_at', 'category',) # Columns to display
-    search_fields = ('title', 'description',)      # Fields to search through
+    """
+    Customizes the admin interface for the Project model.
+    """
+    # Columns to display in the admin list view
+    list_display = ('title', 'link', 'created_at', 'category',)
+
+    # Fields to include in the admin search bar
+    search_fields = ('title', 'description',)
+
+    # Use a horizontal filter widget for the ManyToMany 'technologies' field
     filter_horizontal = ('technologies',)
 
-# Register your models here.
-# Unregister the old simple registration if it exists, and re-register with the admin class
-admin.site.register(Project, ProjectAdmin)
+# Register the other models with the default admin interface
 admin.site.register(Technology)
 admin.site.register(Category)

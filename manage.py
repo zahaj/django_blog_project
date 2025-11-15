@@ -1,5 +1,19 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""
+Django's command-line utility for administrative tasks.
+
+This script serves as the primary entry point for managing the Django project.
+It automatically sets the 'DJANGO_SETTINGS_MODULE' environment variable
+to point to the project's settings file.
+
+Common commands:
+- python manage.py runserver: Starts the development server.
+- python manage.py migrate: Applies database migrations.
+- python manage.py makemigrations: Creates new migration files based on model changes.
+- python manage.py shell: Opens an interactive Python shell with the project loaded.
+- python manage.py createsuperuser: Creates a new admin user.
+- python manage.py collectstatic: Collects static files into STATIC_ROOT.
+"""
 import os
 import sys
 
