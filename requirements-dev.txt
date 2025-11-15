@@ -1,0 +1,6 @@
+# Install all production requirements
+-r requirements.txt
+
+# --- Testing ---
+pytest==8.4.2
+pytest-django==4.11.1
