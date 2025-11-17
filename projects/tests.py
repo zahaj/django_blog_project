@@ -162,6 +162,7 @@ def test_project_update_view(admin_client, test_project):
     test_project.refresh_from_db()
     assert test_project.title == updated_data['title']
 
+@pytest.mark.django_db
 def test_project_delete_view(admin_client, test_project):
     """Test that a logged-in user can delete a project."""
     url = reverse('project_delete', args=[test_project.pk])
@@ -178,4 +179,32 @@ def test_project_delete_view(admin_client, test_project):
 
     assert response.status_code == 302
     assert response.url == reverse('project_index')
+    assert Project.objects.count() == 0
+
+# --- API Tests ---
+
+@pytest.mark.django_db
+def test_project_api_delete_is_secure_for_anonymous_user(client, test_project):
+    """
+    Tests that an anonymous (logged-out) user CANNOT delete a project.
+    """
+    url = reverse('project-detail', args=[test_project.pk])
+    assert Project.objects.count() == 1
+    
+    response = client.delete(url)
+    
+    assert response.status_code == 403
+    assert Project.objects.count() == 1
+
+@pytest.mark.django_db
+def test_project_api_delete_succeeds_for_admin_user(admin_client, test_project):
+    """
+    Tests that an authenticated admin user CAN delete a project.
+    """
+    url = reverse('project-detail', args=[test_project.pk])
+    assert Project.objects.count() == 1
+    
+    response = admin_client.delete(url)
+
+    assert response.status_code == 204
     assert Project.objects.count() == 0
