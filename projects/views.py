@@ -18,6 +18,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
 from rest_framework import viewsets
+from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
 from .serializers import ProjectSerializer, TechnologySerializer
 
 def project_index(request):
@@ -140,16 +141,21 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
 
 # --- ViewSet for API ---
 
-class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
+class ProjectViewSet(viewsets.ModelViewSet):
     """
-    A read-only API endpoint for viewing projects.
+    A read-write API endpoint for projects.
+    - Read operations (list, retrieve) are public.
+    - Write operations (create, update, destroy) are restricted to admins.
     """
     queryset = Project.objects.all().order_by('-created_at')
     serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-class TechnologyViewSet(viewsets.ReadOnlyModelViewSet):
+class TechnologyViewSet(viewsets.ModelViewSet):
     """
-    A read-only API endpoint for viewing technologies.
+    A read-write API endpoint for technologies.
+    Restricted to admin users only.
     """
     queryset = Technology.objects.all()
     serializer_class = TechnologySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
