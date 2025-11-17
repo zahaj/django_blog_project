@@ -7,6 +7,8 @@ included by the main project's urls.py.
 from django.urls import path
 from . import views
 
+app_name = 'projects'
+
 urlpatterns = [
     
     # Core pages

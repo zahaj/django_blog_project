@@ -14,12 +14,12 @@
           <div class="card-body">
             <h5 class="card-title">{{ project.title }}</h5>
             <p class="card-text">{{ project.description|truncatewords:20 }}</p>
-            <a href="{% url 'project_detail' project.pk %}" class="btn btn-primary">Read More</a>
+            <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-primary">Read More</a>
           </div>
           {% if user.is_authenticated %}
             <div class="card-footer bg-white text-end">
-              <a href="{% url 'project_edit' project.pk %}" class="btn btn-sm btn-outline-secondary">Edit Project</a>
-              <a href="{% url 'project_delete' project.pk %}" class="btn btn-sm btn-outline-danger">Delete Project</a>
+              <a href="{% url 'projects:project_edit' project.pk %}" class="btn btn-sm btn-outline-secondary">Edit Project</a>
+              <a href="{% url 'projects:project_delete' project.pk %}" class="btn btn-sm btn-outline-danger">Delete Project</a>
             </div>
           {% endif %}
         </div>

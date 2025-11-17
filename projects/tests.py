@@ -16,7 +16,7 @@ from .models import Project, Technology, Category
 def test_about_page_loads_correctly(client):
     """Tests that the 'about' page loads with a 200 OK status."""
 
-    url = reverse('about')
+    url = reverse('projects:about')
     response = client.get(url)
     assert response.status_code == 200
 
@@ -24,14 +24,14 @@ def test_about_page_loads_correctly(client):
 def test_project_index_loads_correctly(client):
     """Tests that the homepage (project index) loads with a 200 OK status."""
 
-    url = reverse('project_index')
+    url = reverse('projects:project_index')
     response = client.get(url)
     assert response.status_code == 200
 
 @pytest.mark.django_db
 def test_project_index_displays_project_title(client, test_project):
     """Tests that a project's title appears on the homepage."""
-    url = reverse('project_index')
+    url = reverse('projects:project_index')
     response = client.get(url)
 
     assert response.status_code == 200
@@ -40,7 +40,7 @@ def test_project_index_displays_project_title(client, test_project):
 @pytest.mark.django_db
 def test_project_detail_page_loads_correctly(client, test_project):
     """Tests that a project's detail page loads and shows its content."""
-    url = reverse('project_detail', args=[test_project.pk])
+    url = reverse('projects:project_detail', args=[test_project.pk])
     response = client.get(url)
 
     assert response.status_code == 200
@@ -50,7 +50,7 @@ def test_project_detail_page_loads_correctly(client, test_project):
 @pytest.mark.django_db
 def test_technology_detail_page_displays_project(client, test_project, test_technology):
     """Tests that a technology's page correctly lists an associated project."""
-    url = reverse('technology_detail', args=[test_technology.name])
+    url = reverse('projects:technology_detail', args=[test_technology.name])
     response = client.get(url)
 
     assert response.status_code == 200
@@ -61,7 +61,7 @@ def test_technology_detail_page_displays_project(client, test_project, test_tech
 @pytest.mark.django_db
 def test_contact_form_submission_redirects(client):
     """Tests that a valid contact form submission redirects."""
-    url = reverse('contact')
+    url = reverse('projects:contact')
     form_data = {
         'name': "Test User",
         'email': "test@example.com",
@@ -71,12 +71,12 @@ def test_contact_form_submission_redirects(client):
     response = client.post(url, form_data)
 
     assert response.status_code == 302 # Check for redirect
-    assert response.url == reverse('project_index') # Check redirect location
+    assert response.url == reverse('projects:project_index') # Check redirect location
 
 @pytest.mark.django_db
 def test_contact_form_sends_email(client):
     """Tests that a valid contact form submission sends an email."""
-    url = reverse('contact')
+    url = reverse('projects:contact')
     form_data = {
         'name': "Test User",
         'email': "test@example.com",
@@ -86,7 +86,7 @@ def test_contact_form_sends_email(client):
     response = client.post(url, form_data)
 
     assert response.status_code == 302
-    assert response.url == reverse('project_index')
+    assert response.url == reverse('projects:project_index')
     assert len(mail.outbox) == 1 # Check that one email was sent
 
     sent_email = mail.outbox[0]
@@ -99,7 +99,7 @@ def test_contact_form_sends_email(client):
 @pytest.mark.django_db
 def test_project_add_page_is_secure(client):
     """Test that the 'project_add' page redirects unauthenticated users."""
-    protected_url = reverse('project_add')
+    protected_url = reverse('projects:project_add')
     login_url = reverse('admin:login')
 
     response = client.get(protected_url)
@@ -110,7 +110,7 @@ def test_project_add_page_is_secure(client):
 @pytest.mark.django_db
 def test_project_create_view_valid_form(admin_client, project_form_data):
     """Test that a logged-in user can successfully create a new project"""
-    url = reverse('project_add')
+    url = reverse('projects:project_add')
 
     # Check that the page loads
     response = admin_client.get(url)
@@ -131,7 +131,7 @@ def test_project_create_view_invalid_form(admin_client):
     Test that submitting an invalid form (e.g., missing title)
     re-renders the form with errors and does not create a project.
     """
-    url = reverse('project_add')
+    url = reverse('projects:project_add')
 
     invalid_form_data = {
         'description': "A description without a title.",
@@ -147,7 +147,7 @@ def test_project_create_view_invalid_form(admin_client):
 @pytest.mark.django_db
 def test_project_update_view(admin_client, test_project):
     """Test that a logged-in user can update a project."""
-    url = reverse('project_edit', args=[test_project.pk])
+    url = reverse('projects:project_edit', args=[test_project.pk])
 
     updated_data = {
         'title': 'Updated Title',
@@ -165,7 +165,7 @@ def test_project_update_view(admin_client, test_project):
 @pytest.mark.django_db
 def test_project_delete_view(admin_client, test_project):
     """Test that a logged-in user can delete a project."""
-    url = reverse('project_delete', args=[test_project.pk])
+    url = reverse('projects:project_delete', args=[test_project.pk])
     
     # Check that the confirmation page loads
     response = admin_client.get(url)
@@ -178,7 +178,7 @@ def test_project_delete_view(admin_client, test_project):
     response = admin_client.post(url)
 
     assert response.status_code == 302
-    assert response.url == reverse('project_index')
+    assert response.url == reverse('projects:project_index')
     assert Project.objects.count() == 0
 
 # --- API Tests ---

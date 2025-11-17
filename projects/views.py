@@ -110,7 +110,7 @@ def contact(request):
             )
 
             print(f'New Message from {name} ({email}): {message}')
-            return redirect('project_index')
+            return redirect('projects:project_index')
         else:
             print("Form invalid!")
             print(form.errors.as_data())
@@ -126,18 +126,18 @@ class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
     form_class = ProjectForm
     template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project_index') # Where to go after success
+    success_url = reverse_lazy('projects:project_index') # Where to go after success
 
 class ProjectUpdateView(LoginRequiredMixin, UpdateView):
     model = Project
     form_class = ProjectForm
     template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project_index')
+    success_url = reverse_lazy('projects:project_index')
 
 class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
     template_name = 'projects/project_confirm_delete.html'
-    success_url = reverse_lazy('project_index')
+    success_url = reverse_lazy('projects:project_index')
 
 # --- ViewSet for API ---
 
