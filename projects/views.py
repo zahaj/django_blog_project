@@ -11,7 +11,7 @@ CRUD (Create, Read, Update, Delete) operations for Projects.
 """
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import send_mail
-from .models import Project, Technology
+from .models import Project, Technology, Category
 from .forms import ContactForm, ProjectForm
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -91,13 +91,15 @@ def contact(request):
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
             message = form.cleaned_data['message']
+            subject_line = form.cleaned_data['subject']
             
-            subject = f"New Contact Form Submission from {name}"
+            subject = f"Portfolio Contact: {subject_line}"
             email_message = f"""
             You received a new message from your portfolio site:
 
             From: {name}
             Email: {email}
+            Subject: {subject_line}
 
             Message:
             {message}

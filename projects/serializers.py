@@ -18,9 +18,17 @@ class ProjectSerializer(serializers.ModelSerializer):
     Serializer to map the Project model to JSON.
     Includes nested serializers for readable relationships.
     """
+    technologies = serializers.SlugRelatedField(
+        many=True,
+        slug_field="name",
+        queryset=Technology.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field="name",
+        queryset=Category.objects.all()
+    )
+    
     url = serializers.HyperlinkedIdentityField(view_name='project-detail')
-    technologies = serializers.StringRelatedField(many=True)
-    category = serializers.StringRelatedField()
     
     class Meta:
         model = Project
