@@ -1,5 +1,6 @@
 # --- Core Framework ---
 Django==5.2.7
+djangorestframework==3.16.1
 
 # --- Database ---
 dj-database-url==3.0.1

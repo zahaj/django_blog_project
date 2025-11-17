@@ -17,6 +17,8 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
+from rest_framework import viewsets
+from .serializers import ProjectSerializer, TechnologySerializer
 
 def project_index(request):
     """
@@ -135,3 +137,19 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
     template_name = 'projects/project_confirm_delete.html'
     success_url = reverse_lazy('project_index')
+
+# --- ViewSet for API ---
+
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A read-only API endpoint for viewing projects.
+    """
+    queryset = Project.objects.all().order_by('-created_at')
+    serializer_class = ProjectSerializer
+
+class TechnologyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A read-only API endpoint for viewing technologies.
+    """
+    queryset = Technology.objects.all()
+    serializer_class = TechnologySerializer
