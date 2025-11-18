@@ -1,0 +1,22 @@
+# Git
+.git
+.gitignore
+
+# Local environment
+.env
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local database
+db.sqlite3
+
+# IDE files
+.idea/
+.vscode/
+
+# Mac files
+.DS_Store

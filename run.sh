@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script runs our production workflow
+# This script runs the production workflow
 
 echo "Running database migrations..."
 python manage.py migrate
