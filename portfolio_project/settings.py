@@ -125,6 +125,20 @@ if DEBUG:
 
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+    if os.environ.get('AM_I_IN_DOCKER'):
+            # Use the Docker internal URL
+            # We need to make sure this variable exists in your .env or is passed by Compose
+            db_url = os.environ.get('DOCKER_DATABASE_URL')
+            
+            DATABASES = {
+                'default': dj_database_url.parse(db_url, conn_max_age=600)
+            }
+    else:
+            # Use the Local Mac URL
+            DATABASES = {
+                'default': dj_database_url.config(conn_max_age=600) 
+            }
+
 else:
     # --- PRODUCTION SETTINGS ---
 

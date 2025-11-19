@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=portfolio_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  web:
+    build: .
+    command: gunicorn portfolio_project.wsgi --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - AM_I_IN_DOCKER=True
+      - DOCKER_DATABASE_URL=postgres://postgres:postgres@db:5432/portfolio_db
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
