@@ -149,7 +149,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     - Read operations (list, retrieve) are public.
     - Write operations (create, update, destroy) are restricted to admins.
     """
-    queryset = Project.objects.all().order_by('-created_at')
+    queryset = Project.objects.select_related('category').prefetch_related('technologies').all().order_by('-created_at')
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
