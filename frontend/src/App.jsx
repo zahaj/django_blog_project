@@ -36,19 +36,49 @@ function IsLikedButton() {
 function App() {
   // 1. useState: "Memory" for our component.
   // We start with an empty list of projects.
-  const [projects, setProjects] = useState([])
+  const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // 2. useEffect: "Action" to take when the page loads.
   useEffect(() => {
     // Fetch data from your LOCAL Django Docker API
     fetch('http://127.0.0.1:8000/api/projects/')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(data => {
         console.log(data); // Check your browser console!
         setProjects(data); // Save the data to state
+        setIsLoading(false); // 2. Stop loading when data arrives
       })
-      .catch(error => console.error('Error fetching data:', error));
-  }, [])
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setError(error.message); // 3. Save error message if it fails
+        setIsLoading(false);     // Stop loading even if it failed
+      });
+  }, []);
+
+  if (isLoading) {
+      return (
+        <div className="app-container">
+          <h2>🌀 Loading projects...</h2>
+        </div>
+      );
+    }
+
+  if (error) {
+      return (
+        <div className="app-container">
+          <h2 style={{color: 'red'}}>⚠️ Something went wrong!</h2>
+          <p>{error}</p>
+          <p>Make sure your Django server is running.</p>
+        </div>
+      );
+    }
 
   return (
     <div className="app-container">
