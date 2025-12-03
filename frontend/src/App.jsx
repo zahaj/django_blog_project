@@ -1,6 +1,38 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+// A reusable component for a Like Button
+function LikeButton() {
+  // Define State: 'likes' starts at 0
+  const [likes, setLikes] = useState(0);
+
+  // Define the Click Handler
+  const handleClick = () => {
+    setLikes(likes + 1);
+  };
+
+  // Render the HTML
+  return (
+    <button onClick={handleClick}>
+      ❤️ {likes} Likes
+    </button>
+  );
+}
+
+// A reusable component for a Is Liked Button
+function IsLikedButton() {
+  const [isLiked, setIsLiked] = useState(false)
+  const handleClick = () => {
+    setIsLiked(!isLiked);
+  };
+
+  return (
+    <button onClick={handleClick}>
+      {isLiked ? "❤️ Liked!" : "🤍 Like"}
+    </button>
+  );
+}
+
 function App() {
   // 1. useState: "Memory" for our component.
   // We start with an empty list of projects.
@@ -30,10 +62,12 @@ function App() {
             <h2>{project.title}</h2>
             <p>{project.description}</p>
             <small>{project.technologies.join(", ")}</small>
+            <div style={{ marginTop: '10px' }}>
+              <IsLikedButton />
+            </div>
           </div>
         ))}
       </div>
-      
     </div>
   )
 }
